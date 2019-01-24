@@ -1,11 +1,15 @@
 Package: bwgbiomass
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Generate Biomass From BWG Allometry Data
+Version: 0.0.0.9000
+Authors@R: person("Alathea", "Letaw", email = "alathea@lutrisanalytics.com",
+    role = c("aut", "cre"))
+Maintainer: Alathea Letaw <alathea@lutrisanalytics.com>
+Description: Takes as input allometry data files giving size and mass
+    information for BWG species. These data are used to calculate biomasses
+    or biomass estimates for each species where available. A provenance is
+    assigned to each biomass estimate to assist in calculating error on the
+    measurement.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
