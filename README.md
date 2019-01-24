@@ -1,3 +1,8 @@
-# bwgbiomass
+# `bwgbiomass` : generating biomass from allometry data
 
-`install.github("SrivastavaLab/bwgbiomass")`
+## Installation
+
+```r
+library(devtools)
+install_github("SrivastavaLab/bwgbiomass")
+```
