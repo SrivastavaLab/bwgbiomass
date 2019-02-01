@@ -10,6 +10,15 @@ Description: Takes as input allometry data files giving size and mass
     or biomass estimates for each species where available. A provenance is
     assigned to each biomass estimate to assist in calculating error on the
     measurement.
-License: GPL-3
+License: MIT + file LICENSE
 Encoding: UTF-8
+Imports:
+    datastorr,
+    dplyr,
+    purrr,
+    tidyr,
+    broom,
+    stringr,
+    fwdata
 LazyData: true
+RoxygenNote: 6.1.1
