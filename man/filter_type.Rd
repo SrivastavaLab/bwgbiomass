@@ -13,7 +13,7 @@ filter_type(allometry_data, measurement = TRUE)
 \item{measurement}{logical indicating whether the measurements should be filtered into
 the final data set (type = field_measurement). Otherwise, the category
 definitions will be filtered into the final data set
-(type = category_definition)}
+(type = category_definition). Defaults to \emph{measurement = TRUE}}
 }
 \value{
 the filtered data set

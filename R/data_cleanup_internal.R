@@ -72,7 +72,7 @@ calculate_biomass <- function(allometry_data){
 ##' @param measurement logical indicating whether the measurements should be filtered into
 ##'   the final data set (type = field_measurement). Otherwise, the category
 ##'   definitions will be filtered into the final data set
-##'   (type = category_definition)
+##'   (type = category_definition). Defaults to \emph{measurement = TRUE}
 ##'
 ##' @return the filtered data set
 ##'
