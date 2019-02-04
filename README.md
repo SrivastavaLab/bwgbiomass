@@ -14,6 +14,17 @@ devtools::install_github("SrivastavaLab/fwdata")
 devtools::install_github("SrivastavaLab/bwgbiomass")
 ```
 
+Data Version Numbering
+----------------------
+
+Data versions are numbered with a `bwgbiomass` version and an `allometrydata` version.
+
+For example:
+
+**v.0.0.1\_0.0.1**
+
+The numbers before the `_` indicate which version of bwgbiomass is being used. When updates are made to the bwgbiomass code, this number will change. The numbers after the `_` indicate which version of the [allometry data](https://github.com/SrivastavaLab/allometrydata) was used. When allometry data are added or changed, this number will change.
+
 Documentation
 -------------
 
@@ -24,7 +35,7 @@ Documentation
 -   Species with missing stage are given the `stage` *larva*, except for ostracods, which are marked as *adult*
 -   In the allometry matrix, `biomass_mg` was computed by dividing by `number_of_individuals`
 -   Species found at multiple sites are assumed to have the same biomass x length relationship and the linear model was built using all data, not separated by site, habitat, or researcher
--   Sizes in the biomass table with an underscore ("*") are assumed to be a size range and the average of the numbers on either side of the "*" was taken
+-   Sizes in the biomass table with an underscore (`_`) are assumed to be a size range and the average of the numbers on either side of the `_` was taken
 -   Species in the allometry matrix with no `bwg_name` are assumed not to have a `bwg_name` and given a placeholder name of `MISSING_X` where `X` is a unique number for that species
 
 ### Allometric equations
