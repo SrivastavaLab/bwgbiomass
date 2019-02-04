@@ -19,12 +19,12 @@ gen_biomass <- function(data_dir = "_data", version = NULL){
 
   if(is.null(version)){
     biomass_filename <- paste(
-      data_dir, "/", format(Sys.time(),"%Y%m%d"), "_", allometry_version, "_biomass_data.rds",
+      data_dir, "/biomass_", format(Sys.time(),"%Y%m%d"), "_", allometry_version, ".rds",
       sep = ""
     )
   } else {
     biomass_filename <- paste(
-      data_dir, "/v.", version, "_", allometry_version, "_biomass_data.rds",
+      data_dir, "/biomass_v.", version, "_", allometry_version, ".rds",
       sep = ""
     )
   }
