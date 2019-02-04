@@ -4,7 +4,7 @@
 \alias{gen_biomass}
 \title{Generate biomass estimates}
 \usage{
-gen_biomass(data_dir, version = NULL)
+gen_biomass(data_dir = "_data", version = NULL)
 }
 \arguments{
 \item{data_dir}{A local data directory in which to save the biomass data}
