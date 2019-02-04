@@ -64,8 +64,8 @@ number for that species
 
 ### Allometric equations
 
-Allometric equations are calculated by linear regression of log10(mass) (mg)
-against log10(length) (mm).
+Allometric equations are calculated by linear regression of $log_{10}$(mass_mg)
+against $log_{10}$(length_mm).
 
 95% confidence intervals were computed for biomass predictions.
 
@@ -177,7 +177,7 @@ multiple bwg_names, the median biomass of those was used
 * `num_relatives`: how many relatives found in the closest shared taxonomic
 group
 * `shared_taxon`: at which taxonomic level were relatives found
-* `r_squared`: R^2 for the allometric equation
+* `r_squared`: $R^2$ for the allometric equation
 * `sample_size`: sample size for the allometric equation
 * `intercept`: intercept for the allometric equation
 * `slope`: slope for the allometric equation
@@ -221,7 +221,7 @@ grams, so were first multiplied by 1000 to get mg.
 * `stage`: The developmental stage (i.e. "larva", "pupa", "adult")
 * `biomass_type`: **Wet** or **dry** biomass
 * `fit`: The linear model fit
-* `r_squared`: R^2 for the allometric equation
+* `r_squared`: $R^2$ for the allometric equation
 * `sample_size`: sample size for the allometric equation
 * `intercept`: intercept for the allometric equation
 * `slope`: slope for the allometric equation

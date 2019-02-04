@@ -40,7 +40,7 @@ Documentation
 
 ### Allometric equations
 
-Allometric equations are calculated by linear regression of log10(mass) (mg) against log10(length) (mm).
+Allometric equations are calculated by linear regression of *l**o**g*<sub>10</sub>(mass\_mg) against *l**o**g*<sub>10</sub>(length\_mm).
 
 95% confidence intervals were computed for biomass predictions.
 
@@ -111,7 +111,7 @@ Description of output files and column meanings
 -   `closest_relative`: The name of the closest relative. If this contains multiple bwg\_names, the median biomass of those was used
 -   `num_relatives`: how many relatives found in the closest shared taxonomic group
 -   `shared_taxon`: at which taxonomic level were relatives found
--   `r_squared`: R^2 for the allometric equation
+-   `r_squared`: *R*<sup>2</sup> for the allometric equation
 -   `sample_size`: sample size for the allometric equation
 -   `intercept`: intercept for the allometric equation
 -   `slope`: slope for the allometric equation
@@ -149,7 +149,7 @@ Description of output files and column meanings
 -   `stage`: The developmental stage (i.e. "larva", "pupa", "adult")
 -   `biomass_type`: **Wet** or **dry** biomass
 -   `fit`: The linear model fit
--   `r_squared`: R^2 for the allometric equation
+-   `r_squared`: *R*<sup>2</sup> for the allometric equation
 -   `sample_size`: sample size for the allometric equation
 -   `intercept`: intercept for the allometric equation
 -   `slope`: slope for the allometric equation
