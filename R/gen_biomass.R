@@ -24,7 +24,7 @@ gen_biomass <- function(data_dir = "_data", version = NULL){
     )
   } else {
     biomass_filename <- paste(
-      data_dir, "/", version, "_", allometry_version, "_biomass_data.rds",
+      data_dir, "/v.", version, "_", allometry_version, "_biomass_data.rds",
       sep = ""
     )
   }
