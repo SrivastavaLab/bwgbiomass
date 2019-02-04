@@ -14,6 +14,9 @@ select_category_cols <- function(allometry_data){
     dplyr::rename(length_est_mm = length_mm) %>%
     dplyr::select(bwg_name, stage, size_category, length_est_mm)
 
+  # Standardize stage
+  category_lookup[category_lookup$stage == "larvae", "stage"] <- "larva"
+
   return(category_lookup)
 }
 
