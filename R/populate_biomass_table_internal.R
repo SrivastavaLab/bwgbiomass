@@ -37,45 +37,34 @@ populate_biomass_table <- function(allometry_data, equation_bank, biomass_data,
     dplyr::left_join(., closest_relatives) %>%
     dplyr::select(-size_category, -category_range)
 
-  # Calculate biomasses
-  meas_ids    <- unique(biomass_clean$measurement_id)
-  biomass_all <- generate_biomass(biomass_clean, meas_ids,
-                                  "length.raw", "exact",
-                                  allometry, equation_bank)
-  meas_ids    <- unique(biomass_all$measurement_id)
-  biomass_all <- generate_biomass(biomass_all, meas_ids,
-                                  "length.interpolate", "exact",
-                                  allometry, equation_bank)
-  meas_ids    <- unique(biomass_all$measurement_id)
-  biomass_all <- generate_biomass(biomass_all, meas_ids,
-                                  "category.raw", "exact",
-                                  allometry, equation_bank)
-  meas_ids    <- unique(biomass_all$measurement_id)
-  biomass_all <- generate_biomass(biomass_all, meas_ids,
-                                  "category.interpolate", "exact",
-                                  allometry, equation_bank)
-  meas_ids    <- unique(biomass_all$measurement_id)
-  biomass_all <- generate_biomass(biomass_all, meas_ids,
-                                  "length.raw", "related",
-                                  allometry, equation_bank)
-  meas_ids    <- unique(biomass_all$measurement_id)
-  biomass_all <- generate_biomass(biomass_all, meas_ids,
-                                  "length.interpolate", "related",
-                                  allometry, equation_bank)
-  meas_ids    <- unique(biomass_all$measurement_id)
-  biomass_all <- generate_biomass(biomass_all, meas_ids,
-                                  "category.raw", "related",
-                                  allometry, equation_bank)
-  meas_ids    <- unique(biomass_all$measurement_id)
-  biomass_all <- generate_biomass(biomass_all, meas_ids,
-                                  "category.interpolate", "related",
-                                  allometry, equation_bank)
+  # Create the biomass generating function by inputting the relevant data sets
+  generate_biomass <- generate_biomass_fun(BIOMASS   = biomass_clean,
+                                           ALLOMETRY = allometry,
+                                           EQUATIONS = equation_bank)
 
-  biomass_clean <- biomass_clean %>%
-    dplyr::filter(!(measurement_id %in% meas_ids))
+  # Calculate biomasses
+  for(species in c("exact", "related")){
+    for(measurement in c("length", "category")){
+      for(type in c("raw", "interpolate")){
+        biomass_all <- generate_biomass(species, measurement, type)
+      }
+    }
+  }
+
+  # biomass_all <- generate_biomass("exact", "length", "raw")
+  # biomass_all <- generate_biomass("exact", "length", "interpolate")
+  # biomass_all <- generate_biomass("exact", "category", "raw")
+  # biomass_all <- generate_biomass("exact", "category", "interpolate")
+  # biomass_all <- generate_biomass("related", "length", "raw")
+  # biomass_all <- generate_biomass("related", "length", "interpolate")
+  # biomass_all <- generate_biomass("related", "category", "raw")
+  # biomass_all <- generate_biomass("related", "category", "interpolate")
+
+  unresolved <- biomass_clean %>%
+    dplyr::filter(!(measurement_id %in% biomass_all$measurement_id))
 
   # Compute median biomasses for multiple relatives
-  biomass_med <- generate_median_biomass(biomass_clean, allometry_species, equation_species)
+  biomass_med <- generate_median_biomass(unresolved, allometry_species, equation_species)
 
   # Join everything
   biomass_all <- biomass_all %>%
@@ -90,79 +79,100 @@ populate_biomass_table <- function(allometry_data, equation_bank, biomass_data,
   return(biomass_all)
 }
 
-##' Generate biomass calculation for given measurement. Provenance information
-##' is added at this time.
+##' Generate a function for making the biomass calculation for a given
+##' measurement. Provenance information is added at this time.
 ##'
-##' @title Generate biomass
+##' @title Generate biomass function
 ##'
-##' @param biomass_data The biomass data, with all current biomass estimates
-##' @param meas_ids IDs of measurements that already have biomass
-##' @param prov Provenance of the biomass measurement
+##' @param BIOMASS The biomass data, with all current biomass estimates
+##' @param ALLOMETRY The allometry matrix
+##' @param EQUATIONS The equation bank
+##'
 ##' @param prov_species Provenance determined for the species in question, or
 ##'   the closest related specices
-##' @param allometry_data The allometry matrix
-##' @param equation_bank The equation bank
+##' @param prov_meas Provenance measurement (length or category)
+##' @param prov_type Provenance type (raw or interpolate)
+##'
+##' @return A function for generating biomass calculations
 ##'
 ##' @keywords internal
 ##' @importFrom dplyr %>%
 ##' @export
 ##'
-generate_biomass <- function(biomass_data, meas_ids, prov, prov_species,
-                             allometry_data, equation_bank){
-  # Set measurement and type based on provenance input
-  provenance <- stringr::str_split(prov, "\\.", n = 2)
-  measurement <- provenance[[1]][1]
-  type        <- provenance[[1]][2]
+generate_biomass_fun <- function(BIOMASS, ALLOMETRY, EQUATIONS){
 
-  # Define variables based on prov and prov_species:
+  biomass_fun <- function(prov_species, prov_meas, prov_type){
+    ## Get data from parent environment:
+    allometry_data <- ALLOMETRY
+    equation_bank  <- EQUATIONS
 
-  # Use lengths or length estimates?
-  by_length <- switch(measurement,
-                      length   = "length_mm",
-                      category = "length_est_mm")
+    # Filter out resolved biomass measurements
+    if(exists("BIOMASS_ALL")){
+      biomass_data <- BIOMASS %>%
+        dplyr::filter(!(measurement_id %in% BIOMASS_ALL$measurement_id))
+    } else {
+      biomass_data <- BIOMASS
+    }
 
-  # Use the bwg_name of the target species, or the name of the closest_relative?
-  by_species <- switch(prov_species,
-                       exact   = "bwg_name",
-                       related = "closest_relative")
+    ## Define variables based on provenance info:
 
-  # Filter by length_mm or length_est_mm
-  biomass_data <- biomass_data %>%
-    dplyr::filter(!(measurement_id %in% meas_ids)) %>%
-    dplyr::filter(!is.na(biomass_data[, by_length]))
+    # Use lengths or length estimates?
+    by_length <- switch(prov_meas,
+                        length   = "length_mm",
+                        category = "length_est_mm")
 
-  # Join to allometry matrix or equation bank and interpolate or not
-  if(type == "raw"){
-    by_vars        <- c("bwg_name", "stage", "length_mm")
-    names(by_vars) <- c(by_species, "stage", by_length)
+    # Use the bwg_name of the target species, or the name of the closest_relative?
+    by_species <- switch(prov_species,
+                         exact   = "bwg_name",
+                         related = "closest_relative")
 
+    # Filter by length_mm or length_est_mm
     biomass_data <- biomass_data %>%
-      dplyr::inner_join(., allometry_data, by = by_vars)
+      dplyr::filter(!is.na(biomass_data[, by_length]))
 
-  } else if(type == "interpolate"){
-    by_vars        <- c("bwg_name", "stage")
-    names(by_vars) <- c(by_species, "stage")
+    # Skip if there are no rows of data left
+    if(nrow(biomass_data) == 0){
+      next()
+    }
 
+    # Join to allometry matrix or equation bank and interpolate or not
+    if(prov_type == "raw"){
+      by_vars        <- c("bwg_name", "stage", "length_mm")
+      names(by_vars) <- c(by_species, "stage", by_length)
+
+      biomass_data <- biomass_data %>%
+        dplyr::inner_join(., allometry_data, by = by_vars)
+
+    } else if(prov_type == "interpolate"){
+      by_vars        <- c("bwg_name", "stage")
+      names(by_vars) <- c(by_species, "stage")
+
+      biomass_data <- biomass_data %>%
+        dplyr::inner_join(., equation_bank, by = by_vars) %>%
+        interpolate_biomass(., prov_meas)
+
+    } else stop("Unrecognized provenance type.")
+
+    # Add provenance info
     biomass_data <- biomass_data %>%
-      dplyr::inner_join(., equation_bank, by = by_vars) %>%
-      interpolate_biomass(., measurement)
+      dplyr::mutate(provenance         = paste(prov_meas, prov_type, sep = "."),
+                    provenance_species = prov_species)
 
-  } else stop("Unrecognized provenance type.")
+    # Save the resolved biomass values to the parent environment
+    if(exists("BIOMASS_ALL")){
+      biomass_all <- BIOMASS_ALL %>%
+        dplyr::full_join(., biomass_data)
+    } else {
+      biomass_all <- biomass_data
+    }
 
-  # Add provenance info and update biomass_clean
-  biomass_data <- biomass_data %>%
-    dplyr::mutate(provenance         = prov,
-                  provenance_species = prov_species)
+    assign("BIOMASS_ALL", biomass_all, envir = parent.env(environment()))
 
-  # Join to the input biomass_data unless there is nothing to join
-  if(nrow(biomass_data) == 0){
-    return(biomass_data)
-  } else if(prov == "length.raw" & prov_species == "exact"){
-    return(biomass_data)
-  } else {
-    biomass_data <- full_join(biomass_data, biomass_data)
-    return(biomass_data)
+    # Return the data table of resolved biomass values
+    return(biomass_all)
   }
+
+  return(biomass_fun)
 }
 
 ##' Generate median biomass.

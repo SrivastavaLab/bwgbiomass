@@ -10,7 +10,7 @@
 ##' @import fwdata
 ##' @importFrom dplyr %>%
 ##' @export
-gen_biomass <- function(data_dir, version = NULL){
+gen_biomass <- function(data_dir = "_data", version = NULL){
 
   # I/O Variables
   # Biomass filename generated from allometry data version and biomass data
