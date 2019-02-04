@@ -10,6 +10,7 @@
 ##'
 ##' @export
 sanity_check <- function(biomass_data){
+  ## Clean up the original biomass measurements
   # Convert original measurements to mg
   for(i in 1:nrow(biomass_original)){
     if(biomass_original$unit[i] == "g"){
@@ -17,18 +18,36 @@ sanity_check <- function(biomass_data){
     }
   }
 
+  # Add length information
+  biomass_orig_clean <- biomass_original %>%
+    dplyr::rename(biomass_mg = biomass, biomass_type = dry_wet) %>%
+    dplyr::mutate(stage         = stringr::str_split_fixed(.$category_value, "_", 2)[,1],
+                  size_category = stringr::str_split_fixed(.$category_value, "_", 2)[,2]) %>%
+    dplyr::mutate(length_mm = NA) %>%
+    dplyr::select(-category_value)
+
+  # Set blank cells to NA
+  biomass_orig_clean[biomass_orig_clean$stage == "", "stage"] <- NA
+
   # Select relevant columns from the original data
-  biomass_original <- biomass_original %>%
-    dplyr::select(measurement_id, biomass, dry_wet) %>%
-    dplyr::rename(biomass_orig_mg = biomass, biomass_type = dry_wet)
+  biomass_orig_final <- biomass_orig_clean %>%
+    clean_lengths() %>%
+    correct_stages() %>%
+    correct_size_categories() %>%
+    all_ostracods_adults()
+
+  biomass_orig_final <- biomass_orig_final %>%
+    dplyr::select(species_id, measurement_id, biomass_mg, biomass_type, stage,
+                  length_mm) %>%
+    dplyr::rename(biomass_orig_mg = biomass_mg)
 
   # Select relevant columns from the new data
   biomass_new <- biomass_data %>%
     dplyr::select(bwg_name, measurement_id, provenance, provenance_species,
-                  biomass_mg, biomass_type) %>%
+                  biomass_mg, biomass_type, biomass_ci_upr, biomass_ci_lwr, r_squared) %>%
     dplyr::rename(biomass_new_mg = biomass_mg)
 
-  biomass_all <- dplyr::left_join(biomass_new, biomass_original) %>%
+  biomass_all <- dplyr::left_join(biomass_new, biomass_orig_final) %>%
     dplyr::filter(!(is.na(biomass_orig_mg)))
 
   biomass_all$new_over_old <- with(biomass_all, biomass_new_mg / biomass_orig_mg)
