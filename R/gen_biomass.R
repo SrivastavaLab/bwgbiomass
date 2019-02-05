@@ -34,6 +34,7 @@ gen_biomass <- function(data_dir = "_data", version = NULL){
     add_missing_bwg_names()
 
   # The clean allometry matrix
+  # Successfully compared with the original
   allometry_matrix <- allometry_named %>%
     calculate_biomass() %>%
     filter_type() %>%
@@ -44,17 +45,20 @@ gen_biomass <- function(data_dir = "_data", version = NULL){
   species_ids <- get_species_ids()
 
   # Equation bank for calculating biomass
+  # Succesfully compared with the original
   equation_bank <- allometry_matrix %>%
     clean_allometry_matrix() %>%
     run_linear_models() %>%
     obtain_summary_data()
 
   # Category lookup table
+  # Size categories changed in new version
   category_lookup <- allometry_named %>%
     filter_type(measurement = FALSE) %>%
     select_category_cols()
 
   # Clean the original biomass table
+  # Successfully compared with original
   biomass_table <- generate_biomass_table(species_ids) %>%
     clean_lengths() %>%
     correct_stages() %>%
@@ -62,6 +66,7 @@ gen_biomass <- function(data_dir = "_data", version = NULL){
     all_ostracods_adults()
 
   # Get the table of closest relatives
+  # Successfully compared with original
   closest_relatives <- get_closest_relatives(
     biomass_data   = biomass_table,
     allometry_data = allometry_matrix,

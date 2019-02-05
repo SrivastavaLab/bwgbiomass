@@ -18,7 +18,8 @@ populate_biomass_table <- function(allometry_data, equation_bank, biomass_data,
                                    species_data, category_data, closest_relatives){
   ## Remove unneeded columns from the allometry matrix
   allometry <- allometry_data %>%
-    dplyr::select(-size_category, -instar_number, -number_of_individuals)
+    dplyr::select(-size_category, -instar_number, -number_of_individuals, -file,
+                  -type)
 
   ## Create allometry matrix with species ids
   allometry_species <- allometry %>%
@@ -50,15 +51,6 @@ populate_biomass_table <- function(allometry_data, equation_bank, biomass_data,
       }
     }
   }
-
-  # biomass_all <- generate_biomass("exact", "length", "raw")
-  # biomass_all <- generate_biomass("exact", "length", "interpolate")
-  # biomass_all <- generate_biomass("exact", "category", "raw")
-  # biomass_all <- generate_biomass("exact", "category", "interpolate")
-  # biomass_all <- generate_biomass("related", "length", "raw")
-  # biomass_all <- generate_biomass("related", "length", "interpolate")
-  # biomass_all <- generate_biomass("related", "category", "raw")
-  # biomass_all <- generate_biomass("related", "category", "interpolate")
 
   unresolved <- biomass_clean %>%
     dplyr::filter(!(measurement_id %in% biomass_all$measurement_id))
@@ -130,11 +122,6 @@ generate_biomass_fun <- function(BIOMASS, ALLOMETRY, EQUATIONS){
     biomass_data <- biomass_data %>%
       dplyr::filter(!is.na(biomass_data[, by_length]))
 
-    # Skip if there are no rows of data left
-    if(nrow(biomass_data) == 0){
-      next()
-    }
-
     # Join to allometry matrix or equation bank and interpolate or not
     if(prov_type == "raw"){
       by_vars        <- c("bwg_name", "stage", "length_mm")
@@ -152,6 +139,16 @@ generate_biomass_fun <- function(BIOMASS, ALLOMETRY, EQUATIONS){
         interpolate_biomass(., prov_meas)
 
     } else stop("Unrecognized provenance type.")
+
+    # Skip if there are no rows of data left
+    if(nrow(biomass_data) == 0){
+      if(exists("BIOMASS_ALL")){
+        biomass_all <- BIOMASS_ALL
+        return(biomass_all)
+      } else {
+        return(biomass_data)
+      }
+    }
 
     # Add provenance info
     biomass_data <- biomass_data %>%
