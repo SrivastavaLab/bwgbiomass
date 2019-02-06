@@ -18,8 +18,7 @@ populate_biomass_table <- function(allometry_data, equation_bank, biomass_data,
                                    species_data, category_data, closest_relatives){
   ## Remove unneeded columns from the allometry matrix
   allometry <- allometry_data %>%
-    dplyr::select(-size_category, -instar_number, -number_of_individuals, -file,
-                  -type)
+    dplyr::select(-size_category, -instar_number, -number_of_individuals)
 
   ## Create allometry matrix with species ids
   allometry_species <- allometry %>%
