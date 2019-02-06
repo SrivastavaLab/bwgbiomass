@@ -1,8 +1,35 @@
+##' Create the cleaned up biomass table by importing the existing biomass
+##' data and removing existing biomass information.
+##'
+##' @title Create the cleaned up biomass table
+##'
+##' @param species_ids A table of species_ids and corresponding taxonomy info
+##' created by using the function "get_species_ids()" in this package. Default
+##' value of "NULL".
+##'
+##' @importFrom dplyr %>%
+##' @export
+##'
+create_biomass_table <- function(species_ids = NULL){
+  # Create the data frame of species IDs if it is missing
+  if(!(exists("species_ids"))){
+    species_ids <- get_species_ids()
+  }
+
+  biomass_table <- obtain_biomass_table(species_ids) %>%
+    clean_lengths() %>%
+    correct_stages() %>%
+    correct_size_categories() %>%
+    all_ostracods_adults()
+
+  return(biomass_table)
+}
+
 ##' Obtain the original biomass table from the saved package data. Clean
 ##' the table for further use. The original table is called "biomass_original"
 ##' and is stored as system data (sysdata).
 ##'
-##' @title Generate the biomass table
+##' @title Obtain original biomass table
 ##'
 ##' @param species_info A table of species_ids and corresponding taxonomy info
 ##'
@@ -10,7 +37,7 @@
 ##' @importFrom dplyr %>%
 ##' @export
 ##'
-generate_biomass_table <- function(species_info){
+obtain_biomass_table <- function(species_info){
   # Merge biomass table with species names from bwgdb
   # Add the species names to the table
   biomass_named <-  merge(biomass_original, species_info)

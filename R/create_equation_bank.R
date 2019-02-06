@@ -1,3 +1,29 @@
+##' Create the allometric equation bank
+##'
+##' @title Create equation bank
+##'
+##' @param allometry_matrix The allometry matrix as created by this package
+##'  using the "create_allometry_matrix()" function. Default value is NULL. If
+##'  left as NULL, the function will start by creating the allometry matrix.
+##'
+##'  @return A data frame containing the equation bank
+##'
+##' @importFrom dplyr %>%
+##' @export
+create_equation_bank <- function(allometry_matrix = NULL){
+  # Check for the allometry matrix and create it if it doesn't exist
+  if(!(exists("allometry_matrix"))){
+    allometry_matrix <- create_allometry_matrix()
+  }
+
+  equation_bank <- allometry_matrix %>%
+    clean_allometry_matrix() %>%
+    run_linear_models() %>%
+    obtain_summary_data()
+
+  return(equation_bank)
+}
+
 ##' Remove rows with missing mass or length
 ##'
 ##' @title Clean allometry matrix

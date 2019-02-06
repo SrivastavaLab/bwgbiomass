@@ -1,3 +1,23 @@
+##' Creates the allometry matrix from the allometry data set:
+##'   \url{https://github.com/SrivastavaLab/allometrydata/}
+##'
+##' @title Create the allometry matrix
+##'
+##' @return The allometry matrix as a data frame.
+##'
+##' @importFrom dplyr %>%
+##' @export
+create_allometry_matrix <- function(){
+  allometry_matrix <- allometry() %>%
+    add_missing_bwg_names() %>%
+    calculate_biomass() %>%
+    filter_type() %>%
+    standardize_stages() %>%
+    remove_missing_biomass()
+
+  return(allometry_matrix)
+}
+
 ##' Add a placeholder for species missing a BWG name. Makes it possible to
 ##' group by bwg_name even when one wasn't given.
 ##'
