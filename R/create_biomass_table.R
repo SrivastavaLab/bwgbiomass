@@ -12,7 +12,7 @@
 ##'
 create_biomass_table <- function(species_ids = NULL){
   # Create the data frame of species IDs if it is missing
-  if(!(exists("species_ids"))){
+  if(is.null(species_ids)){
     species_ids <- get_species_ids()
   }
 

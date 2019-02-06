@@ -12,7 +12,7 @@
 ##' @export
 create_equation_bank <- function(allometry_matrix = NULL){
   # Check for the allometry matrix and create it if it doesn't exist
-  if(!(exists("allometry_matrix"))){
+  if(is.null(allometry_matrix)){
     allometry_matrix <- create_allometry_matrix()
   }
 
