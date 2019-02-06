@@ -52,5 +52,12 @@ sanity_check <- function(biomass_data){
 
   biomass_all$new_over_old <- with(biomass_all, biomass_new_mg / biomass_orig_mg)
 
+  # Rearrange the data frame
+  biomass_all <- biomass_all %>%
+    dplyr::select(measurement_id, species_id, bwg_name, stage, length_mm,
+                  provenance, provenance_species, biomass_type, biomass_orig_mg,
+                  biomass_new_mg, new_over_old, biomass_ci_upr, biomass_ci_lwr,
+                  r_squared)
+
   return(biomass_all)
 }
