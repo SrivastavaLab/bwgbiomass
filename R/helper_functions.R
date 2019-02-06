@@ -16,6 +16,7 @@
 ##' @importFrom dplyr %>%
 ##' @export
 filter_type <- function(allometry_data, measurement = TRUE){
+  # Filter by measurement type
   if(measurement){
     filtered_data <- allometry_data %>%
       dplyr::filter(type == "field_measurement")
@@ -23,6 +24,10 @@ filter_type <- function(allometry_data, measurement = TRUE){
     filtered_data <- allometry_data %>%
       dplyr::filter(type == "category_definition")
   }
+
+  # Remove type column
+  filterd_data <- filtered_data %>%
+    dplyr::select(-type)
 
   return(filtered_data)
 }
