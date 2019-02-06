@@ -20,7 +20,11 @@ Usage
 Acquire the latest release of [allometry data](https://github.com/SrivastavaLab/allometrydata) or biomass data
 
 ``` r
+# Acquire the latest allometry data release
+
 allometry_data <- allometry()
+
+# Acquire the latest bwgbiomass data release
 
 biomass_data <- biomass()
 ```
@@ -54,6 +58,12 @@ biomass_table <- create_biomass_table()
 To do a data comparison with the original biomass estimates:
 
 ``` r
+# Get the latest data
+
+biomass_data <- biomass()
+
+# Do the data check
+
 check_data <- sanity_check(biomass_data)
 ```
 
@@ -197,22 +207,22 @@ The full table of new biomass estimates, using the function `gen_biomass()`
 -   `intercept`: intercept for the allometric equation
 -   `slope`: slope for the allometric equation
 
-`check_data`: Comparison of biomass measurements with Jana's values
+#### Data check
 
+Comparison of biomass measurements with Jana's values (from the original table). Generated using the function `sanity_check()`
+
+-   `measurement_id`: a unique ID for the size measurement
+-   `species_id`: a unique ID for the species
 -   `bwg_name`: The BWG name from the database
--   `biomass_type`: **Wet** or **dry** biomass
+-   `stage`: The developmental stage (i.e. "larva", "pupa", "adult")
+-   `length_mm`: The length (if available) of the individual in millimetres
 -   `provenance`: method used to calculate biomass
 -   `provenance_species`: species on which biomass calculation was performed
--   `closest_relative`: The name of the closest relative. If this contains multiple bwg\_names, the median biomass of those was used
--   `shared_taxon`: at which taxonomic level were relatives found
--   `stage`: The developmental stage (i.e. "larva", "pupa", "adult")
--   `stage_jana`: The developmental stage from Jana's data
--   `size_jana`: The size given in Jana's data (length in mm)
--   `length_mm`: The length (if available) of the individual in millimetres
--   `length_est_mm`: If a category was used to make an estimate of length, that estimate is placed in this column
--   `biomass_g_jana`: The biomass from Jana's data, in grams
--   `biomass_mg`: Wet or dry mass of the individual, in milligrams
--   `jana_div_by_me`: Jana's biomass divided by my biomass; a value close to one indicates a close match; A value larger than one means Jana's biomass was larger; A value less than one means my biomass was larger; Jana's biomass values are in grams, so were first multiplied by 1000 to get mg.
+-   `biomass_orig_mg`: Wet or dry mass of the individual, in milligrams found in the original biomass table
+-   `biomass_new_mg`: Wet or dry mass of the individual, in milligrams calculated by this script
+-   `new_over_old`: Original biomass divided by my biomass; a value close to one indicates a close match; A value larger than one means the original biomass was larger; A value less than one means the new biomass was larger; Many of the original biomass values are in grams, so were first multiplied by 1000 to get mg.
+-   `biomass_ci_upr` and `biomass_ci_lwr`: bounds on the 95% confidence interval of biomass\_new\_mg if interpolation was used
+-   `r_squared`: *R*<sup>2</sup> for the allometric equation used to generate biomass\_new\_mg, if applicable
 
 Future Improvements
 -------------------
