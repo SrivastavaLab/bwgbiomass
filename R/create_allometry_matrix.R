@@ -13,7 +13,8 @@ create_allometry_matrix <- function(){
     calculate_biomass() %>%
     filter_type() %>%
     standardize_stages() %>%
-    remove_missing_biomass()
+    remove_missing_biomass() %>%
+    remove_file_col()
 
   return(allometry_matrix)
 }
@@ -124,6 +125,23 @@ standardize_stages <- function(allometry_data){
 ##' @export
 remove_missing_biomass <- function(allometry_data){
   allometry_matrix <- dplyr::filter(allometry_data, !(is.na(biomass_mg)))
+
+  return(allometry_matrix)
+}
+
+##' Remove the "file" column.
+##'
+##' @title Remove file column
+##'
+##' @param allometry_data The allometry data set loaded from:
+##'   \url{https://github.com/SrivastavaLab/allometrydata/}
+##'
+##' @return Data with file column removed.
+##'
+##' @keywords internal
+##' @export
+remove_file_col <- function(allometry_data){
+  allometry_matrix <- dplyr::select(allometry_data, -file)
 
   return(allometry_matrix)
 }
