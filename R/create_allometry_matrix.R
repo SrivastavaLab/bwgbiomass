@@ -13,9 +13,10 @@ add_missing_bwg_names <- function(allometry_data){
   # Add a name to NA bwg names
   missing_names <- allometry_data %>%
     dplyr::filter(is.na(bwg_name)) %>%
-    dplyr::mutate(id = dplyr::group_indices(., name)) %>%
-    dplyr::mutate(bwg_name = paste("MISSING", id, sep="_")) %>%
-    dplyr::select(-id)
+    dplyr::mutate(bwg_name = paste("MISSING", name, sep="_"))
+    # dplyr::mutate(id = dplyr::group_indices(., name)) %>%
+    # dplyr::mutate(bwg_name = paste("MISSING", id, sep="_")) %>%
+    # dplyr::select(-id)
 
   # Get all the bwg_names
   named_data <- allometry_data %>%
